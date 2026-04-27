@@ -57,7 +57,12 @@ class _DetailsState extends State<Details> {
                 Container(
                   decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(8)),
 
-                  child: Icon(Icons.add, color: Colors.white,),
+                  child: Row(
+                    children: [
+                      Icon(Icons.add, color: Colors.white,),
+                      Icon(Icons.add, color: Colors.white,),
+                    ],
+                  ),
                 ),
               ],
             )
