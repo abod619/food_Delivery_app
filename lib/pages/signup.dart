@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fooddeliveryapp/pages/login.dart';
 import 'package:fooddeliveryapp/widget/widget_support.dart';
@@ -10,6 +11,33 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+String email="", password="", name="";
+
+TextEditingController namecontroller= new TextEditingController();
+TextEditingController passwordcontroller= new TextEditingController();
+TextEditingController emailcontroller= new TextEditingController();
+
+final _fromkey= GlobalKey<FormState>();
+
+registration() async{
+  if(password!= null){
+    try{
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.greenAccent,
+        content: Text('Registration Successful', style: TextStyle(fontSize: 20),)));
+    }on FirebaseException catch(e){
+      if(e.code == 'weak-password'){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Password Provided is too weak',style: TextStyle(fontSize: 18),),));
+      }
+      else if(e.code == "email-already-in-use"){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.orangeAccent,
+          content: Text('Acxcount Already exists', style: TextStyle(fontSize: 18),)));
+      }
+    }
+  }
+}
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -49,52 +77,76 @@ class _SignupState extends State<Signup> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height/1.8,
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 30,),
-                          Text("Signup" , style: AppWidget.HeadlineTextFeildStyle(),),
-                          SizedBox(height: 30,),
-                           TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Name', hintStyle: AppWidget.semiBooldTextTextFeildStyle(),
-                              prefixIcon: Icon(Icons.person_2_outlined)
-                            ),
-                          ),
-                          SizedBox(height: 30,),
-                          TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Email', hintStyle: AppWidget.semiBooldTextTextFeildStyle(),
-                              prefixIcon: Icon(Icons.email_outlined)
-                            ),
-                          ),
-                          SizedBox(height: 30,),
-                          TextField(
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              hintText: 'Password', hintStyle: AppWidget.semiBooldTextTextFeildStyle(),
-                              prefixIcon: Icon(Icons.password_outlined)
-                            ),
-                          ),
-                          SizedBox(height: 30,),
-
-                          Container(
-                            alignment: Alignment.topRight,
-                            child: Text("Forget Password?", style: AppWidget.semiBooldTextTextFeildStyle(),)
-                            ),
-                            SizedBox(height: 80,),
-
-                            Material(
-                              elevation: 5,
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                width: 200,
-                                decoration: BoxDecoration(color: Color(0xffff5722),borderRadius: BorderRadius.circular(20)),
-                                child: Center(child: Text('SIGN UP', style:  TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
+                      child: Form(
+                        key: _fromkey,
+                        child: Column(
+                          children: [
+                            SizedBox(height: 30,),
+                            Text("Signup" , style: AppWidget.HeadlineTextFeildStyle(),),
+                            SizedBox(height: 30,),
+                             TextFormField(
+                              controller: namecontroller,
+                              validator: (value) {
+                                if(value == null || value.isEmpty){
+                                  return 'Please enter yor name';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Name', hintStyle: AppWidget.semiBooldTextTextFeildStyle(),
+                                prefixIcon: Icon(Icons.person_2_outlined)
                               ),
                             ),
-                         
-                        ],
+                            SizedBox(height: 30,),
+                            TextFormField(
+                              controller: emailcontroller,
+                              validator: (value) {
+                                if(value == null || value.isEmpty){
+                                  return 'Please enter your email';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Email', hintStyle: AppWidget.semiBooldTextTextFeildStyle(),
+                                prefixIcon: Icon(Icons.email_outlined)
+                              ),
+                            ),
+                            SizedBox(height: 30,),
+                            TextFormField(
+                              controller: passwordcontroller,
+                              validator: (value) {
+                                if(value == null || value.isEmpty){
+                                  return 'Please enter your password';
+                                }
+                                return null;
+                              },
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                hintText: 'Password', hintStyle: AppWidget.semiBooldTextTextFeildStyle(),
+                                prefixIcon: Icon(Icons.password_outlined)
+                              ),
+                            ),
+                            SizedBox(height: 30,),
+                        
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: Text("Forget Password?", style: AppWidget.semiBooldTextTextFeildStyle(),)
+                              ),
+                              SizedBox(height: 80,),
+                        
+                              Material(
+                                elevation: 5,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                  width: 200,
+                                  decoration: BoxDecoration(color: Color(0xffff5722),borderRadius: BorderRadius.circular(20)),
+                                  child: Center(child: Text('SIGN UP', style:  TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
+                                ),
+                              ),
+                           
+                          ],
+                        ),
                       ),
                     ),
                   ),
